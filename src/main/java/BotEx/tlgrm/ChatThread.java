@@ -1,11 +1,11 @@
-package tlgrm;
+package BotEx.tlgrm;
 
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.PhotoSize;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import statPicture.Drawer;
+import BotEx.statPicture.Drawer;
 import java.util.List;
 
 public class ChatThread implements Runnable{

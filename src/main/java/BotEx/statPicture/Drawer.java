@@ -1,6 +1,6 @@
-package statPicture;
+package BotEx.statPicture;
 
-import tlgrm.HttpExecuter;
+import BotEx.tlgrm.HttpExecuter;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

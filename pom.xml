@@ -39,6 +39,11 @@
             <artifactId>spring-webmvc</artifactId>
             <version>4.3.9.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.0-b07</version>
+        </dependency>
         <!--<dependency>-->
             <!--<groupId>org.bytedeco.javacpp-presets</groupId>-->
             <!--<artifactId>tesseract</artifactId>-->
@@ -54,6 +59,7 @@
 
     </dependencies>
     <build>
+        <finalName>BotEx</finalName>
         <plugins>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>

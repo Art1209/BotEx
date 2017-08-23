@@ -1,4 +1,4 @@
-package tlgrm;
+package BotEx.tlgrm;
 
 
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -11,7 +11,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.management.ObjectName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
