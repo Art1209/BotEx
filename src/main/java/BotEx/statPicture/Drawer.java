@@ -148,7 +148,8 @@ public class Drawer {
     private void initImages(){
         try {
             if (sourceImage==null)sourceImage = ImageIO.read(sourceImageFile);
-            if (watermarkImage==null) watermarkImage = ImageIO.read(watermarkImageFile);
+            // Костыль todo 
+            if (watermarkImage==null) watermarkImage = sourceImage;
         } catch (IOException e) {
             e.printStackTrace();
         }
