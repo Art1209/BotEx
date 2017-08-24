@@ -31,9 +31,6 @@ public class ChatThread implements Runnable{
         file_path =httpExecuter.JsonFindByKey(MyBot.API_FILE_PATH,httpExecuter.makeRequestGetJson(getFilePath));
         file_link = String.format(MyBot.API_GET_FILE_LINK,MyBot.TOKEN,file_path);
 
-        System.out.println(textParser(file_link));
-
-
         Drawer drawer = new Drawer(file_link);
         java.io.File targetFile = new java.io.File(MyBot.TARGET_FILE);
         drawer.setDestImageFile(targetFile);
