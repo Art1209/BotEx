@@ -1,5 +1,6 @@
 package BotEx.tlgrm;
 
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.PhotoSize;
 import org.telegram.telegrambots.api.objects.Update;
@@ -42,8 +43,12 @@ public class ChatThread implements Runnable{
         SendPhoto photoMessage = new SendPhoto() // Create a message object object
                 .setChatId(chat_id)
                 .setNewPhoto(targetFile);
+        SendMessage message = new SendMessage() // Create a message object object
+                .setChatId(chat_id)
+                .setText(textParser(file_link));
         try {
             bot.sendPhoto(photoMessage);
+            bot.sendMessage(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }

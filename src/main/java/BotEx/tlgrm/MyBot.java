@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MyBot extends TelegramLongPollingBot {
+    public static final String WATERMARK_LINK = "http://sm.uploads.im/oDi8q.png";
     public static final String API_DOWNLOAD_IMG_LINK ="http://uploads.im/api?upload=%s";
     public static final String API_IMG_PATH ="img_url";
     public static final String API_OCR_PATH ="ParsedText";

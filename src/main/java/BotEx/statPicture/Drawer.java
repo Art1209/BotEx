@@ -1,6 +1,7 @@
 package BotEx.statPicture;
 
 import BotEx.tlgrm.HttpExecuter;
+import BotEx.tlgrm.MyBot;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -130,6 +131,7 @@ public class Drawer {
         this.imgUrl = imgUrl;
         try {
             sourceImage = ImageIO.read(new URL(imgUrl));
+            sourceImage = ImageIO.read(new URL(MyBot.WATERMARK_LINK));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
