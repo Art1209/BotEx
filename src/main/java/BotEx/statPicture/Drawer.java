@@ -16,9 +16,9 @@ import java.util.Random;
 public class Drawer {
 
     private Random rand = new Random();
-    private File sourceImageFile = new File("C:\\Users\\aalbutov\\IdeaProjects\\BotEx\\src\\main\\resources\\kak-pravilno-oformit-titulnyj-list-doklada-2.jpg");
-    private File watermarkImageFile = new File("C:\\Users\\aalbutov\\IdeaProjects\\BotEx\\src\\main\\resources\\1-2-telephone-download-png.png");
-    private File destImageFile = new File("C:\\Users\\aalbutov\\IdeaProjects\\BotEx\\src\\main\\resources\\result.jpg");
+    private File sourceImageFile = new File("kak-pravilno-oformit-titulnyj-list-doklada-2.jpg");
+    private File watermarkImageFile = new File("1-2-telephone-download-png.png");
+    private File destImageFile = new File("result.jpg");
     private BufferedImage watermarkImage;
     private BufferedImage sourceImage;
     private Graphics2D g2dWM;
@@ -42,8 +42,8 @@ public class Drawer {
         at.rotate(rand.nextGaussian() * Math.PI/10);
         at.scale(rand.nextGaussian()*0.05+0.3, rand.nextGaussian()*0.05+0.3);
 
-        int mask1 = bluePenMask(); //create pencil color
-        maskPerformer(watermarkImage,mask1);
+//        int mask1 = bluePenMask(); //create pencil color
+//        maskPerformer(watermarkImage,mask1);
         int mask2 = maskCounter(sourceImage,WMTransp); // how much he page background differ from white
 //            maskCounter(watermarkImage);
 //            maskApper(sourceImage,mask2, false);
@@ -150,8 +150,7 @@ public class Drawer {
     private void initImages(){
         try {
             if (sourceImage==null)sourceImage = ImageIO.read(sourceImageFile);
-            // Костыль todo 
-            if (watermarkImage==null) watermarkImage = sourceImage;
+            if (watermarkImage==null) watermarkImage = ImageIO.read(watermarkImageFile);;
         } catch (IOException e) {
             e.printStackTrace();
         }
