@@ -1,10 +1,13 @@
 package BotEx.tlgrm;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
-public class MainBot {
+
+@SpringBootApplication
+public class MainBot{
     public static void main(String[] args) {
 //        BufferedImage sourceImage=null;
 //        File destImageFile = new File("C:\\Users\\aalbutov\\IdeaProjects\\BotEx\\src\\main\\resources\\result.jpg");
@@ -23,6 +26,7 @@ public class MainBot {
 //        }
 //        // Initialize Api Context
         ApiContextInitializer.init();
+
 
         // Instantiate Telegram Bots API
         TelegramBotsApi botsApi = new TelegramBotsApi();
