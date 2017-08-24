@@ -131,7 +131,7 @@ public class Drawer {
         this.imgUrl = imgUrl;
         try {
             sourceImage = ImageIO.read(new URL(imgUrl));
-            sourceImage = ImageIO.read(new URL(MyBot.WATERMARK_LINK));
+            sourceImage = ImageIO.read(getClass().getResourceAsStream(watermarkImageFile.getName()));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
