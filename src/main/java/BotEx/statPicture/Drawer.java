@@ -130,13 +130,9 @@ public class Drawer {
     public Drawer(String imgUrl) {
         this.imgUrl = imgUrl;
         try {
-            sourceImage = ImageIO.read(new URL(imgUrl));
-            sourceImage = ImageIO.read(new URL(MyBot.WATERMARK_LINK));
-        } catch (MalformedURLException e) {
-            System.out.println("MalformedURLException");
-            e.printStackTrace();
+            sourceImage = ImageIO.read(httpExecuter.getStreamForFileUrl(imgUrl));
+            sourceImage = ImageIO.read(httpExecuter.getStreamForFileUrl(MyBot.WATERMARK_LINK));
         } catch (IOException e) {
-            System.out.println("IOException");
             e.printStackTrace();
         }
 //        initImages();
