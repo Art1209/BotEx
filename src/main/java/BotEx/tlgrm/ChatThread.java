@@ -32,6 +32,7 @@ public class ChatThread implements Runnable{
 
     @Override
     public void run() {
+        System.out.println("starting run");
         List<PhotoSize> LPhS= update.getMessage().getPhoto();
         String file_Id = LPhS.get(LPhS.size()-1).getFileId();
         String file_path =null;
@@ -50,6 +51,7 @@ public class ChatThread implements Runnable{
     }
 // todo make mode enum
     private void doSomeWork(String link) {
+        System.out.println(mode);
         if (mode =="parse")doParse(link);
         if (mode =="sign")doSign(link);
     }
@@ -63,6 +65,7 @@ public class ChatThread implements Runnable{
         } catch (NullPointerException e){
             e.printStackTrace();
             failTask();
+            return;
         }
 
         int x = (((HashMap<String, Double>)obj).get("Left")).intValue();
@@ -89,6 +92,7 @@ public class ChatThread implements Runnable{
         System.out.println("parsing");
         InputStream jsonStreamFromParserAPI = httpExecuter.requestForStream(String.format(MyBot.API_OCR_PARSE, link,getLang()));
         String result =parser.JsonFindByKey(MyBot.API_OCR_PATH, jsonStreamFromParserAPI);
+        System.out.println(result.substring(0,20));
         SendMessage message = new SendMessage() // Create a message object object
                 .setChatId(chat_id)
                 .setText(result);

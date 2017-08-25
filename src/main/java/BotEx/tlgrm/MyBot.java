@@ -41,6 +41,7 @@ public class MyBot extends TelegramLongPollingBot {
             Message message = update.getMessage();
             long chat_id = message.getChatId();
             if (needNewChatThread(chat_id)){
+                System.out.println("adding "+chat_id);
                 chatThreads.put(chat_id,ChatThread.getChatThread(update, this));
             }
             if (message.hasText()) {
