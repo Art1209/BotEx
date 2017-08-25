@@ -25,6 +25,7 @@ public class MyBot extends TelegramLongPollingBot {
     ExecutorService exec = Executors.newFixedThreadPool(10);
 
 
+
     public void onUpdateReceived(Update update) {
 
         // We check if the update has a message and the message has TEXT
