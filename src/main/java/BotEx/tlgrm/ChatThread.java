@@ -7,6 +7,8 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import BotEx.statPicture.Drawer;
+
+import java.io.InputStream;
 import java.util.List;
 
 public class ChatThread implements Runnable{
@@ -14,10 +16,10 @@ public class ChatThread implements Runnable{
     private String lang = "rus";
     private TelegramLongPollingBot bot;
     private HttpExecuter httpExecuter= HttpExecuter.getHttpExecuter();
+    private JsonRecoursiveParser parser= JsonRecoursiveParser.getParser();
 
     public static ChatThread getChatThread(Update update, TelegramLongPollingBot bot) {
-        ChatThread chat = new ChatThread(update, bot);
-        return chat;
+        return new ChatThread(update, bot);
     }
 
 
@@ -28,7 +30,7 @@ public class ChatThread implements Runnable{
         String file_path =null;
         String file_link = null;
         String getFilePath = String.format(MyBot.API_GET_FILE_PATH_LINK,MyBot.TOKEN,file_Id);
-        file_path =httpExecuter.JsonFindByKey(MyBot.API_FILE_PATH,httpExecuter.makeRequestGetJson(getFilePath));
+        file_path =parser.JsonFindByKey(MyBot.API_FILE_PATH, httpExecuter.requestForStream(getFilePath));
         file_link = String.format(MyBot.API_GET_FILE_LINK,MyBot.TOKEN,file_path);
 
         Drawer drawer = new Drawer(file_link);
@@ -58,8 +60,10 @@ public class ChatThread implements Runnable{
     }
 
     public String textParser(String inputImg){
-        String hostingImg = httpExecuter.JsonFindByKey(MyBot.API_IMG_PATH,httpExecuter.makeRequestGetJson(String.format(MyBot.API_DOWNLOAD_IMG_LINK, inputImg)));
-        String result =httpExecuter.JsonFindByKey(MyBot.API_OCR_PATH,httpExecuter.makeRequestGetJson(String.format(MyBot.API_OCR_GET_LINK, hostingImg,getLang())));
+        InputStream jsonStreamFromImgHosting= httpExecuter.requestForStream(String.format(MyBot.API_DOWNLOAD_IMG_LINK, inputImg));
+        String hostingImg = parser.JsonFindByKey(MyBot.API_IMG_PATH, jsonStreamFromImgHosting);
+        InputStream jsonStreamFromParserAPI = httpExecuter.requestForStream(String.format(MyBot.API_OCR_GET_LINK, hostingImg,getLang()));
+        String result =parser.JsonFindByKey(MyBot.API_OCR_PATH, jsonStreamFromParserAPI);
         return result;
     }
 

@@ -22,7 +22,7 @@ public class MyBot extends TelegramLongPollingBot {
     public static final String TARGET_FILE ="C:\\Users\\aalbutov\\IdeaProjects\\BotEx\\src\\main\\resources\\result.jpg";
     public static final String[] LANGS = {"rus", "eng"};
     private Map<Long,ChatThread> chatThreads = new HashMap<>();
-    ExecutorService exec = Executors.newFixedThreadPool(10);
+    private ExecutorService exec = Executors.newFixedThreadPool(10);
 
 
 
@@ -57,17 +57,16 @@ public class MyBot extends TelegramLongPollingBot {
     }
 
     private boolean needNewChatThread(String msg, long id) {
-        if (containsIgnoreCase(LANGS, msg)&&!chatThreads.containsKey(id))return true;
-        return false;
+        return (containsIgnoreCase(LANGS, msg)&&!chatThreads.containsKey(id));
     }
 
-    public boolean containsIgnoreCase(String[] list, String key){
+    private boolean containsIgnoreCase(String[] list, String key){
         for (String str:list) {
             if (str.equalsIgnoreCase(key)) return true;
         } return false;
     }
 
-    public boolean deleteFromChatThreads(long id){
+    boolean deleteFromChatThreads(long id){
         if (chatThreads.containsKey(id)){
             chatThreads.remove(id);
             return true;

@@ -9,32 +9,29 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Random;
 
 public class Drawer {
 
     private Random rand = new Random();
-    private File sourceImageFile = new File("kak-pravilno-oformit-titulnyj-list-doklada-2.jpg");
-    private File watermarkImageFile = new File("1-2-telephone-download-png.png");
-    private File destImageFile = new File("result.jpg");
+
+    private File sourceImageFile;
+    private File watermarkImageFile;
+    private File destImageFile;
+
     private BufferedImage watermarkImage;
     private BufferedImage sourceImage;
-    private Graphics2D g2dWM;
-    private Graphics2D g2dSI;
-    private HttpExecuter httpExecuter = HttpExecuter.getHttpExecuter();
 
-    public String imgUrl;
+    private String imgUrl;
 
     public void addImageWatermark(double WMTransp) {
         AlphaComposite alphaChannelWM = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
         AlphaComposite alphaChannelSI = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
 
-        g2dWM = (Graphics2D) sourceImage.getGraphics();
+        Graphics2D g2dWM = (Graphics2D) sourceImage.getGraphics();
         g2dWM.setComposite(alphaChannelWM);
 
-        g2dSI = (Graphics2D) sourceImage.getGraphics();
+        Graphics2D g2dSI = (Graphics2D) sourceImage.getGraphics();
         g2dSI.setComposite(alphaChannelSI);
 
         AffineTransform at = new AffineTransform();
@@ -42,27 +39,30 @@ public class Drawer {
         at.rotate(rand.nextGaussian() * Math.PI/10);
         at.scale(rand.nextGaussian()*0.05+0.3, rand.nextGaussian()*0.05+0.3);
 
-//        int mask1 = bluePenMask(); //create pencil color
-//        maskPerformer(watermarkImage,mask1);
-        int mask2 = maskCounter(sourceImage,WMTransp); // how much he page background differ from white
+//        int mask1 = bluePenMask(); //create random pencil color for black watermark
+//        maskPerformer(watermarkImage,mask1); //apply pencil color to watermark
+        int mask2 = maskCounter(sourceImage,WMTransp); // how much the page background differ from white
 //            maskCounter(watermarkImage);
 //            maskApper(sourceImage,mask2, false);
-        maskApper(watermarkImage, sourceImage, mask2, false); // adds same darkness as mask to original picture
+        maskApper(watermarkImage, mask2); // adds same darkness as mask to original picture
 
         g2dSI.drawImage(watermarkImage,at,null);
-        try {
-            ImageIO.write(sourceImage, "png", destImageFile);
-        } catch (IOException ex) {ex.printStackTrace();}
+        if (destImageFile!=null){
+            try {
+                ImageIO.write(sourceImage, "png", destImageFile);
+            } catch (IOException ex) {ex.printStackTrace();}
+        }
+
         g2dWM.dispose();
         g2dSI.dispose();
     }
 
     public int bluePenMask() {
 //        return(50<<16)|(10<< 8)|(90<< 0);
-        return(50+rand.nextInt(50)<<16)|(10+rand.nextInt(20)<< 8)|(90+ rand.nextInt(50)<< 0);
+        return(50+rand.nextInt(50)<<16)|(10+rand.nextInt(20)<< 8)|(90+ rand.nextInt(50));
     }
 
-    public int maskCounter(BufferedImage image, double WMTransp){
+    private int maskCounter(BufferedImage image, double WMTransp){
         int resultMask =0;
         int tMask =0;
         int rMask =0;
@@ -86,18 +86,21 @@ public class Drawer {
         rMask=(rMask/400);
         gMask=(gMask/400);
         bMask=(bMask/400);
-        resultMask = (tMask<<24|rMask<< 16)|(gMask << 8)|(bMask << 0);
+        resultMask = (tMask<<24|rMask<< 16)|(gMask << 8)| bMask;
         return resultMask;
     }
 
-    public void maskPerformer(BufferedImage image, int mask){
+    private void maskPerformer(BufferedImage image, int mask){
         for (int x = 0; x<image.getWidth();x++){
             for (int y = 0; y<image.getHeight();y++){
                 image.setRGB(x,y,image.getRGB(x,y)|mask);
             }
         }
     }
-    public void maskApper(BufferedImage image, BufferedImage backgroundImage, int mask, boolean reverse){
+
+    private void maskApper(BufferedImage image, int mask){maskApper(image,mask, false);}
+
+    private void maskApper(BufferedImage image, int mask, boolean reverse){
         Graphics2D imageG = (Graphics2D) image.getGraphics();
         AlphaComposite alphaChannel = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
         imageG.setComposite(alphaChannel);
@@ -123,11 +126,21 @@ public class Drawer {
         imageG.drawImage(tempImage, null, 0, 0);
     }
 
+    private void initImages(){ // for local debug purposes
+        try {
+            if (sourceImage==null)sourceImage = ImageIO.read(sourceImageFile);
+            if (watermarkImage==null) watermarkImage = ImageIO.read(getClass().getResourceAsStream(watermarkImageFile.getName()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public Drawer() {
         //call initImages() after file setters are done
     }
 
     public Drawer(String imgUrl) {
+        HttpExecuter httpExecuter = HttpExecuter.getHttpExecuter();
         this.imgUrl = imgUrl;
         try {
             sourceImage = ImageIO.read(httpExecuter.getStreamForFileUrl(imgUrl));
@@ -135,7 +148,6 @@ public class Drawer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        initImages();
     }
 
     public Drawer(File sourceImageFile, File watermarkImageFile, File destImageFile) {
@@ -143,15 +155,6 @@ public class Drawer {
         this.watermarkImageFile = watermarkImageFile;
         this.destImageFile = destImageFile;
         initImages();
-    }
-
-    private void initImages(){
-        try {
-            if (sourceImage==null)sourceImage = ImageIO.read(sourceImageFile);
-            if (watermarkImage==null) watermarkImage = ImageIO.read(getClass().getResourceAsStream(watermarkImageFile.getName()));;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public Drawer setSourceImageFile(File sourceImageFile) {
