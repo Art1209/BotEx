@@ -111,7 +111,7 @@
                     <assembleDirectory>target</assembleDirectory>
                     <programs>
                         <program>
-                            <mainClass>BotEx.MainBot</mainClass>
+                            <mainClass>BotEx.tlgrm.MainBot</mainClass>
                             <name>workerBot</name>
                         </program>
                     </programs>
