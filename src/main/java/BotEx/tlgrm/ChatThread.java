@@ -52,27 +52,28 @@ public class ChatThread implements Runnable{
 // todo make mode enum
     private void doSomeWork(String link) {
         System.out.println(mode);
-        if (mode =="parse")doParse(link);
+        if (mode =="parse"){
+            doParse(link);
+            System.out.println("Это точно парс");
+        }
         if (mode =="sign")doSign(link);
     }
 
     private void doSign(String link) {
         System.out.println("signing");
         InputStream jsonStreamFromParserAPI = httpExecuter.requestForStream(String.format(MyBot.API_OCR_PARSE_OVERLAY, link,getLang()));
-        JSONObject obj = null;
+        int x, y, width, height;
         try {
-            obj = parser.JsonFindByValue(MyBot.MATCH_TEMPLATE, jsonStreamFromParserAPI);
+            JSONObject obj = parser.JsonFindByValue(MyBot.MATCH_TEMPLATE, jsonStreamFromParserAPI);
+            x = (((HashMap<String, Double>)obj).get("Left")).intValue();
+            y = (((HashMap<String, Double>)obj).get("Top")).intValue();
+            width = (((HashMap<String, Double>)obj).get("Width")).intValue();
+            height = (((HashMap<String, Double>)obj).get("Height")).intValue();
         } catch (NullPointerException e){
             e.printStackTrace();
             failTask();
             return;
         }
-
-        int x = (((HashMap<String, Double>)obj).get("Left")).intValue();
-        int y = (((HashMap<String, Double>)obj).get("Top")).intValue();
-        int width = (((HashMap<String, Double>)obj).get("Width")).intValue();
-        int height = (((HashMap<String, Double>)obj).get("Height")).intValue();
-
 
         outputFile = new File(MyBot.STANDART_FILE_NAME+chat_id);
         Drawer drawer = new Drawer(link, WaterMarkService.getRandomWatermark());
@@ -116,6 +117,7 @@ public class ChatThread implements Runnable{
 
 
     private void doInTheEnd() {
+        System.out.println("end");
         ((MyBot)bot).deleteFromChatThreads(chat_id);
         if (outputFile!=null)outputFile.delete();
     }

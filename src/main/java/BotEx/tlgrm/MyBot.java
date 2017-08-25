@@ -16,7 +16,7 @@ public class MyBot extends TelegramLongPollingBot {
     public static final String API_DOWNLOAD_IMG_LINK ="http://uploads.im/api?upload=%s&resize_width=400";
     public static final String API_IMG_PATH ="img_url";
     public static final String API_OCR_PATH ="ParsedText";
-    public static final String MATCH_TEMPLATE ="default";
+    public static final String MATCH_TEMPLATE ="OCR";
     public static final String API_OCR_PARSE ="https://api.ocr.space/parse/imageurl?apikey=c9f49f68ca88957&url=%s&language=%s";
     public static final String API_OCR_PARSE_OVERLAY ="https://api.ocr.space/parse/imageurl?apikey=c9f49f68ca88957&url=%s&language=%s&isOverlayRequired=true";
     public static final String LANG_CHANGE_SUCCESS = "язык изменен на %s";
