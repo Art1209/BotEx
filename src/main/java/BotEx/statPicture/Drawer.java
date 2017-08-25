@@ -37,7 +37,7 @@ public class Drawer {
         AffineTransform at = new AffineTransform();
         at.translate(x, y);
         at.rotate(rand.nextGaussian() * Math.PI/15);
-        at.scale(rand.nextGaussian()*0.05+0.3, rand.nextGaussian()*0.05+0.3);
+        at.scale(rand.nextGaussian()*0.05+((0.3*scale)/15), rand.nextGaussian()*0.05+((0.3*scale)/15));
 
 //        int mask1 = bluePenMask(); //create random pencil color for black watermark
 //        maskPerformer(watermarkImage,mask1); //apply pencil color to watermark
