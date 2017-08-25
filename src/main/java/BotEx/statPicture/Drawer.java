@@ -131,7 +131,7 @@ public class Drawer {
         this.imgUrl = imgUrl;
         try {
             sourceImage = ImageIO.read(httpExecuter.getStreamForFileUrl(imgUrl));
-            sourceImage = ImageIO.read(httpExecuter.getStreamForFileUrl(MyBot.WATERMARK_LINK));
+            watermarkImage = ImageIO.read(httpExecuter.getStreamForFileUrl(MyBot.WATERMARK_LINK));
         } catch (IOException e) {
             e.printStackTrace();
         }
