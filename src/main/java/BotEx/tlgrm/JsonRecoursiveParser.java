@@ -21,7 +21,7 @@ public class JsonRecoursiveParser {
         return recParser==null?new JsonRecoursiveParser():recParser;
     }
 
-    public synchronized String JsonFindByKey (String key, InputStream is){
+    public String JsonFindByKey (String key, InputStream is){
         String result = null;
         JSONObject jsonObj = null;
         try {
@@ -36,7 +36,7 @@ public class JsonRecoursiveParser {
         }
         return result;
     }
-    private synchronized String JsonRecoursiveFind(JSONObject jsonObject, String key){
+    private String JsonRecoursiveFind(JSONObject jsonObject, String key){
         String result = null;
         Set<Object> keys = jsonObject.keySet();
         if (!keys.contains(key)){
@@ -54,7 +54,7 @@ public class JsonRecoursiveParser {
         }else result =  jsonObject.get(key).toString();
         return result;
     }
-    private synchronized String JsonArrayChecker(JSONArray arr, String key){
+    private String JsonArrayChecker(JSONArray arr, String key){
         String result = null;
         for (Object obj:arr){
             if (JSONObject.class.isInstance(obj)){
@@ -69,7 +69,7 @@ public class JsonRecoursiveParser {
         return result;
     }
 
-    public synchronized JSONObject JsonFindByValue (String value, InputStream is){
+    public JSONObject JsonFindByValue (String value, InputStream is){
         JSONObject result = null;
         JSONObject jsonObj = null;
         try {
@@ -84,7 +84,7 @@ public class JsonRecoursiveParser {
         }
         return result;
     }
-    private synchronized JSONObject JsonRecoursiveFindByValue(JSONObject jsonObject, String value){
+    private JSONObject JsonRecoursiveFindByValue(JSONObject jsonObject, String value){
         JSONObject result = null;
         Collection<Object> values = jsonObject.values();
         Set<Object> keys = jsonObject.keySet();
@@ -103,7 +103,7 @@ public class JsonRecoursiveParser {
         }else result = jsonObject;
         return result;
     }
-    private synchronized JSONObject JsonArrayCheckerByValue(JSONArray arr, String value){
+    private JSONObject JsonArrayCheckerByValue(JSONArray arr, String value){
         JSONObject result = null;
         for (Object obj:arr){
             if (JSONObject.class.isInstance(obj)){

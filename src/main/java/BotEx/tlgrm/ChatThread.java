@@ -32,7 +32,6 @@ public class ChatThread implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("starting run");
         List<PhotoSize> LPhS= update.getMessage().getPhoto();
         String file_Id = LPhS.get(LPhS.size()-1).getFileId();
         String file_path =null;
@@ -51,12 +50,15 @@ public class ChatThread implements Runnable{
     }
 // todo make mode enum
     private void doSomeWork(String link) {
-        System.out.println(mode);
+        System.out.println(mode+link);
         if (mode =="parse"){
-            doParse(link);
             System.out.println("Это точно парс");
+            doParse(link);
         }
-        if (mode =="sign")doSign(link);
+        if (mode =="sign"){
+            System.out.println("Это точно сайн");
+            doSign(link);
+        }
     }
 
     private void doSign(String link) {
