@@ -47,11 +47,6 @@ public class Drawer {
         maskApper(watermarkImage, mask2); // adds same darkness as mask to original picture
 
         g2dSI.drawImage(watermarkImage,at,null);
-        if (destImageFile!=null){
-            try {
-                ImageIO.write(sourceImage, "png", destImageFile);
-            } catch (IOException ex) {ex.printStackTrace();}
-        }
 
         g2dWM.dispose();
         g2dSI.dispose();
@@ -60,6 +55,13 @@ public class Drawer {
     public int bluePenMask() {
 //        return(50<<16)|(10<< 8)|(90<< 0);
         return(50+rand.nextInt(50)<<16)|(10+rand.nextInt(20)<< 8)|(90+ rand.nextInt(50));
+    }
+
+    public void getResultToFile(File file){
+        try {
+            destImageFile = file;
+            ImageIO.write(sourceImage, "png", destImageFile);
+        } catch (IOException ex) {ex.printStackTrace();}
     }
 
     private int maskCounter(BufferedImage image, double WMTransp){
@@ -139,12 +141,12 @@ public class Drawer {
         //call initImages() after file setters are done
     }
 
-    public Drawer(String imgUrl) {
+    public Drawer(String sourceImgUrl, String wmImgUrl) {
         HttpExecuter httpExecuter = HttpExecuter.getHttpExecuter();
-        this.imgUrl = imgUrl;
+        this.imgUrl = sourceImgUrl;
         try {
-            sourceImage = ImageIO.read(httpExecuter.getStreamForFileUrl(imgUrl));
-            watermarkImage = ImageIO.read(httpExecuter.getStreamForFileUrl(MyBot.WATERMARK_LINK));
+            sourceImage = ImageIO.read(httpExecuter.getStreamForFileUrl(sourceImgUrl));
+            watermarkImage = ImageIO.read(httpExecuter.getStreamForFileUrl(wmImgUrl));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package BotEx.tlgrm;
 
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -15,49 +16,62 @@ public class MyBot extends TelegramLongPollingBot {
     public static final String API_OCR_PATH ="ParsedText";
     public static final String API_OCR_GET_LINK ="https://api.ocr.space/parse/imageurl?apikey=c9f49f68ca88957&url=%s&language=%s";
     public static final String LANG_CHANGE_SUCCESS = "язык изменен на %s";
+    public static final String MODE_CHANGE_SUCCESS = "режим работы изменен на %s";
     public static final String API_FILE_PATH = "file_path";
     public static final String API_GET_FILE_PATH_LINK = "https://api.telegram.org/bot%s/getFile?file_id=%s";
     public static final String API_GET_FILE_LINK = "https://api.telegram.org/file/bot%s/%s";
     public static final String TOKEN ="449406097:AAFZ4ZN8LGsfdZSZ9SBNJLwYCsNKUVbq5Hs";
-    public static final String TARGET_FILE ="C:\\Users\\aalbutov\\IdeaProjects\\BotEx\\src\\main\\resources\\result.jpg";
+    public static final String TARGET_FILE ="result.jpg";
+    public static final String ECHO_FORMAT = "ECHO:%s";
+    public static final String STANDART_FILE_NAME = "file_";
     public static final String[] LANGS = {"rus", "eng"};
+    public static final String[] MODES = {"parse", "sign"};
     private Map<Long,ChatThread> chatThreads = new HashMap<>();
     private ExecutorService exec = Executors.newFixedThreadPool(10);
 
 
 
     public void onUpdateReceived(Update update) {
+        if (update.hasMessage()){
+            Message message = update.getMessage();
+            long chat_id = message.getChatId();
+            if (needNewChatThread(chat_id)){
+                chatThreads.put(chat_id,ChatThread.getChatThread(update, this));
+            }
+            if (message.hasText()) {
+                String message_text = message.getText();
+                String back_message_text = commandHandler(message_text, chat_id);
 
-        // We check if the update has a message and the message has TEXT
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            long chat_id = update.getMessage().getChatId();
-            String message_text = update.getMessage().getText();
-            if (needNewChatThread(message_text, chat_id)){
-                chatThreads.put(chat_id,ChatThread.getChatThread(update,this).setLang(message_text.toLowerCase()));
-                message_text = String.format(LANG_CHANGE_SUCCESS, message_text);
+                SendMessage sendMessage = new SendMessage() // Create a message object object
+                        .setChatId(chat_id)
+                        .setText(back_message_text);
+                try {
+                    sendMessage(sendMessage);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
             }
-            SendMessage message = new SendMessage() // Create a message object object
-                    .setChatId(chat_id)
-                    .setText(message_text);
-            try {
-                sendMessage(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        }
 
-        // We check if the update has a message and the message is PHOTO
-        if (update.hasMessage() && update.getMessage().hasPhoto()) {
-            long chat_id = update.getMessage().getChatId();
-            if (!chatThreads.containsKey(chat_id)){
-                chatThreads.put(chat_id,ChatThread.getChatThread(update,this));
+            if (message.hasPhoto()) {
+                exec.execute(chatThreads.get(chat_id).setUpdate(update));
             }
-            exec.execute(chatThreads.get(chat_id).setUpdate(update));
+
         }
     }
 
-    private boolean needNewChatThread(String msg, long id) {
-        return (containsIgnoreCase(LANGS, msg)&&!chatThreads.containsKey(id));
+    private String commandHandler(String message, long id){
+        String format;
+        if (containsIgnoreCase(MODES, message)){
+            chatThreads.get(id).setMode(message.toLowerCase());
+            format = MODE_CHANGE_SUCCESS;
+        } else if (containsIgnoreCase(LANGS, message)){
+            chatThreads.get(id).setLang(message.toLowerCase());
+            format = LANG_CHANGE_SUCCESS;
+        } else format = ECHO_FORMAT;
+        return String.format(format, message);
+    }
+    private boolean needNewChatThread(long id) {  // вынес в отдельный метод на случай изменения условия хранения данных потока
+        return !chatThreads.containsKey(id);
     }
 
     private boolean containsIgnoreCase(String[] list, String key){
