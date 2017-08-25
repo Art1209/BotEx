@@ -1,7 +1,6 @@
 package BotEx.statPicture;
 
 import BotEx.tlgrm.HttpExecuter;
-import BotEx.tlgrm.MyBot;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,6 +13,7 @@ import java.util.Random;
 public class Drawer {
 
     private Random rand = new Random();
+    double WMTransp = 0.3; //прорачность маски фона для watermark
 
     private File sourceImageFile;
     private File watermarkImageFile;
@@ -24,7 +24,7 @@ public class Drawer {
 
     private String imgUrl;
 
-    public void addImageWatermark(double WMTransp) {
+    public void addImageWatermark(int x, int y, int scale) {
         AlphaComposite alphaChannelWM = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
         AlphaComposite alphaChannelSI = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
 
@@ -35,8 +35,8 @@ public class Drawer {
         g2dSI.setComposite(alphaChannelSI);
 
         AffineTransform at = new AffineTransform();
-        at.translate(sourceImage.getWidth()/2, sourceImage.getHeight()/2);
-        at.rotate(rand.nextGaussian() * Math.PI/10);
+        at.translate(x, y);
+        at.rotate(rand.nextGaussian() * Math.PI/15);
         at.scale(rand.nextGaussian()*0.05+0.3, rand.nextGaussian()*0.05+0.3);
 
 //        int mask1 = bluePenMask(); //create random pencil color for black watermark

@@ -11,10 +11,12 @@ import java.util.concurrent.Executors;
 
 public class MyBot extends TelegramLongPollingBot {
     public static final String WATERMARK_LINK = "http://sm.uploads.im/ep2Xi.png";
-    public static final String API_DOWNLOAD_IMG_LINK ="http://uploads.im/api?upload=%s";
+    public static final String API_DOWNLOAD_IMG_LINK ="http://uploads.im/api?upload=%s&resize_width=400";
     public static final String API_IMG_PATH ="img_url";
     public static final String API_OCR_PATH ="ParsedText";
-    public static final String API_OCR_GET_LINK ="https://api.ocr.space/parse/imageurl?apikey=c9f49f68ca88957&url=%s&language=%s";
+    public static final String MATCH_TEMPLATE ="limitation";
+    public static final String API_OCR_PARSE ="https://api.ocr.space/parse/imageurl?apikey=c9f49f68ca88957&url=%s&language=%s";
+    public static final String API_OCR_PARSE_OVERLAY ="https://api.ocr.space/parse/imageurl?apikey=c9f49f68ca88957&url=%s&language=%s&isOverlayRequired=true";
     public static final String LANG_CHANGE_SUCCESS = "язык изменен на %s";
     public static final String MODE_CHANGE_SUCCESS = "режим работы изменен на %s";
     public static final String API_FILE_PATH = "file_path";
