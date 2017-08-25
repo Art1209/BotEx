@@ -1,5 +1,7 @@
 package BotEx.tlgrm;
 
+import BotEx.statPicture.Drawer;
+import lombok.extern.log4j.Log4j;
 import org.json.simple.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
@@ -7,13 +9,13 @@ import org.telegram.telegrambots.api.objects.PhotoSize;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import BotEx.statPicture.Drawer;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
+@Log4j
 public class ChatThread implements Runnable{
     private Update update;
     private String mode = "sign";
@@ -51,11 +53,13 @@ public class ChatThread implements Runnable{
     }
 // todo make mode enum
     private void doSomeWork(String link) {
+        log.info("dosomework");
         if (mode =="parse")doParse(link);
         if (mode =="sign")doSign(link);
     }
 
     private void doSign(String link) {
+        log.info("dosign");
         InputStream jsonStreamFromParserAPI = httpExecuter.requestForStream(String.format(MyBot.API_OCR_PARSE_OVERLAY, link,getLang()));
         JSONObject obj = parser.JsonFindByValue(MyBot.MATCH_TEMPLATE, jsonStreamFromParserAPI);
         int x = (((HashMap<String, Double>)obj).get("Left")).intValue();
@@ -79,6 +83,7 @@ public class ChatThread implements Runnable{
     }
 
     private void doParse(String link) {
+        log.info("doparse");
         InputStream jsonStreamFromParserAPI = httpExecuter.requestForStream(String.format(MyBot.API_OCR_PARSE, link,getLang()));
         String result =parser.JsonFindByKey(MyBot.API_OCR_PATH, jsonStreamFromParserAPI);
         SendMessage message = new SendMessage() // Create a message object object

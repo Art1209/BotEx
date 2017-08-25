@@ -1,5 +1,6 @@
 package BotEx.tlgrm;
 
+import lombok.extern.log4j.Log4j;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
@@ -9,6 +10,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Log4j
 public class MyBot extends TelegramLongPollingBot {
     public static final String WATERMARK_LINK = "http://sm.uploads.im/ep2Xi.png";
     public static final String API_DOWNLOAD_IMG_LINK ="http://uploads.im/api?upload=%s&resize_width=400";
@@ -34,13 +36,17 @@ public class MyBot extends TelegramLongPollingBot {
 
 
     public void onUpdateReceived(Update update) {
+        log.info("onupdate");
         if (update.hasMessage()){
+            log.info("onupdatehasmesage");
             Message message = update.getMessage();
             long chat_id = message.getChatId();
             if (needNewChatThread(chat_id)){
+                log.info("adding into chatThreads" + chat_id);
                 chatThreads.put(chat_id,ChatThread.getChatThread(update, this));
             }
             if (message.hasText()) {
+                log.info("onupdatehastext");
                 String message_text = message.getText();
                 String back_message_text = commandHandler(message_text, chat_id);
 
@@ -55,6 +61,7 @@ public class MyBot extends TelegramLongPollingBot {
             }
 
             if (message.hasPhoto()) {
+                log.info("onupdatehasphoto");
                 exec.execute(chatThreads.get(chat_id).setUpdate(update));
             }
 
@@ -62,6 +69,7 @@ public class MyBot extends TelegramLongPollingBot {
     }
 
     private String commandHandler(String message, long id){
+        log.info("commandHandler "+id);
         String format;
         if (containsIgnoreCase(MODES, message)){
             chatThreads.get(id).setMode(message.toLowerCase());
@@ -83,6 +91,7 @@ public class MyBot extends TelegramLongPollingBot {
     }
 
     boolean deleteFromChatThreads(long id){
+        log.info("deletefromcahtthread " +id);
         if (chatThreads.containsKey(id)){
             chatThreads.remove(id);
             return true;
