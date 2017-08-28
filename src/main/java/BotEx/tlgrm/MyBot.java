@@ -20,7 +20,6 @@ public class MyBot extends TelegramLongPollingBot {
     public static final String API_OCR_PARSE_OVERLAY ="https://api.ocr.space/parse/imageurl?apikey=c9f49f68ca88957&url=%s&language=%s&isOverlayRequired=true";
     public static final String LANG_CHANGE_SUCCESS = "язык изменен на %s";
     public static final String MODE_CHANGE_SUCCESS = "режим работы изменен на %s";
-    public static final String MATCH_TEMPLATE_COMMAND_PREFIX = "find";
     public static final String MATCH_TEMPLATE_CHANGE_SUCCESS = "поисковый запрос изменен на [ %s ]";
     public static final String API_FILE_PATH = "file_path";
     public static final String API_GET_FILE_PATH_LINK = "https://api.telegram.org/bot%s/getFile?file_id=%s";
@@ -30,6 +29,7 @@ public class MyBot extends TelegramLongPollingBot {
     public static final String ECHO_FORMAT = "ECHO:%s";
     public static final String STANDART_FILE_NAME = "file_";
     public static final String ON_FAIL_MESSAGE = "Неудачная попытка, попробуте еще раз";
+    public static final String[] MATCH_TEMPLATE_COMMAND_PREFIX = {"find"};
     public static final String[] LANGS = {"rus", "eng"};
     public static final String[] MODES = {"parse", "sign"};
 
@@ -70,8 +70,9 @@ public class MyBot extends TelegramLongPollingBot {
 
     private String commandHandler(String message, long id){
         String format;
-        if (message.startsWith(MATCH_TEMPLATE_COMMAND_PREFIX)) {
-            message = message.replace(MATCH_TEMPLATE_COMMAND_PREFIX,"").trim();
+        // используется массив, при добавлении команд добавить распарсить что пришло!
+        if (containsIgnoreCase(MATCH_TEMPLATE_COMMAND_PREFIX,  message.split(" ")[0])) {
+            message = message.replace(MATCH_TEMPLATE_COMMAND_PREFIX[0],"").trim();
             chatThreads.get(id).setMatchTemplate(message);
             format = MATCH_TEMPLATE_CHANGE_SUCCESS;
         } else if (containsIgnoreCase(MODES, message)){

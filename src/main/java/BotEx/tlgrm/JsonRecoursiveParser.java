@@ -9,7 +9,9 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public class JsonRecoursiveParser {
@@ -21,13 +23,13 @@ public class JsonRecoursiveParser {
         return recParser==null?new JsonRecoursiveParser():recParser;
     }
 
-    public String JsonFindByKey (String key, InputStream is){
+    public String jsonFindByKey(String key, InputStream is){
         String result = null;
         JSONObject jsonObj = null;
         try {
             jsonObj = (JSONObject) parser.parse(new InputStreamReader(is));
             if (!jsonObj.isEmpty()){
-                result= JsonRecoursiveFind(jsonObj , key);
+                result= jsonRecoursiveFind(jsonObj , key);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -36,46 +38,52 @@ public class JsonRecoursiveParser {
         }
         return result;
     }
-    private String JsonRecoursiveFind(JSONObject jsonObject, String key){
+
+    private String jsonRecoursiveFind(JSONObject jsonObject, String key){
         String result = null;
         Set<Object> keys = jsonObject.keySet();
         if (!keys.contains(key)){
             for (Object jsonKey: keys){
                 Object value = jsonObject.get(jsonKey);
                 if (jsonObject.getClass().isInstance(value)){
-                    result = JsonRecoursiveFind((JSONObject) value, key);
+                    result = jsonRecoursiveFind((JSONObject) value, key);
                     if (result!=null) break;
                 }
                 if (JSONArray.class.isInstance(value)){
-                    result = JsonArrayChecker((JSONArray) value, key);
+                    result = jsonArrayChecker((JSONArray) value, key);
                     if (result!=null) break;
                 }
             }
         }else result =  jsonObject.get(key).toString();
         return result;
     }
-    private String JsonArrayChecker(JSONArray arr, String key){
+
+    private String jsonArrayChecker(JSONArray arr, String key){
         String result = null;
         for (Object obj:arr){
             if (JSONObject.class.isInstance(obj)){
-                result = JsonRecoursiveFind((JSONObject) obj, key);
+                result = jsonRecoursiveFind((JSONObject) obj, key);
                 if (result!=null) break;
             }
             if (JSONArray.class.isInstance(obj)){
-                result = JsonArrayChecker((JSONArray) obj, key);
+                result = jsonArrayChecker((JSONArray) obj, key);
                 if (result!=null) break;
             }
         }
         return result;
     }
 
-    public JSONObject JsonFindByValue (String value, InputStream is){
+
+    public JSONObject jsonFindByValue(String value, InputStream is){
+        String [] matches = value.split(" ");
         JSONObject result = null;
         JSONObject jsonObj = null;
         try {
             jsonObj = (JSONObject) parser.parse(new InputStreamReader(is));
             if (!jsonObj.isEmpty()){
-                result= JsonRecoursiveFindByValue(jsonObj , value);
+                if (matches.length>1){
+                    result = jsonFindLastElemOfSentence(jsonObj, matches);
+                }else result= jsonRecoursiveFindByValue(jsonObj , value);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -84,7 +92,8 @@ public class JsonRecoursiveParser {
         }
         return result;
     }
-    private JSONObject JsonRecoursiveFindByValue(JSONObject jsonObject, String value){
+
+    private JSONObject jsonRecoursiveFindByValue(JSONObject jsonObject, String value){
         JSONObject result = null;
         Collection<Object> values = jsonObject.values();
         Set<Object> keys = jsonObject.keySet();
@@ -92,29 +101,81 @@ public class JsonRecoursiveParser {
             for (Object key: keys){
                 Object jsonValue = jsonObject.get(key);
                 if (jsonObject.getClass().isInstance(jsonValue)){
-                    result = JsonRecoursiveFindByValue((JSONObject) jsonValue, value);
+                    result = jsonRecoursiveFindByValue((JSONObject) jsonValue, value);
                     if (result!=null) break;
                 }
                 if (JSONArray.class.isInstance(jsonValue)){
-                    result = JsonArrayCheckerByValue((JSONArray) jsonValue, value);
+                    result = jsonArrayCheckerByValue((JSONArray) jsonValue, value);
                     if (result!=null) break;
                 }
             }
         }else result = jsonObject;
         return result;
     }
-    private JSONObject JsonArrayCheckerByValue(JSONArray arr, String value){
+
+    private JSONObject jsonArrayCheckerByValue(JSONArray arr, String value){
         JSONObject result = null;
         for (Object obj:arr){
             if (JSONObject.class.isInstance(obj)){
-                result = JsonRecoursiveFindByValue((JSONObject) obj, value);
+                result = jsonRecoursiveFindByValue((JSONObject) obj, value);
                 if (result!=null) break;
             }
             if (JSONArray.class.isInstance(obj)){
-                result = JsonArrayCheckerByValue((JSONArray) obj, value);
+                result = jsonArrayCheckerByValue((JSONArray) obj, value);
                 if (result!=null) break;
             }
         }
         return result;
+    }
+
+
+    public JSONObject jsonFindLastElemOfSentence(JSONObject jsonObject, String[]matches){
+        JSONObject obj = null;
+        // todo разхардкодить
+        List<ParsedWord> results = jsonFindAllByKey(jsonObject, "WordText");
+        for (int i = 0; i<(results.size()-matches.length);i++){
+            int count=0;
+            for (int j = 0; j<matches.length;j++){
+                if (results.get(i+j).getWord().equals(matches[j])){
+                    count++;
+                }
+            }
+            if (count==matches.length){
+                obj =  results.get(i+matches.length-1).getObj();
+            }
+        }return obj;
+    }
+
+
+    public List<ParsedWord> jsonFindAllByKey(JSONObject jsonObject, String key){
+        List<ParsedWord> results = new ArrayList<>();
+        jsonRecoursiveFindAll(jsonObject , results, key);
+        return results;
+    }
+
+    private void jsonRecoursiveFindAll(JSONObject jsonObject, List<ParsedWord> results, String key){
+        Set<Object> keys = jsonObject.keySet();
+        if (!keys.contains(key)){
+            for (Object jsonKey: keys){
+                Object value = jsonObject.get(jsonKey);
+                if (jsonObject.getClass().isInstance(value)){
+                    jsonRecoursiveFindAll((JSONObject) value,results, key);
+                }
+                if (JSONArray.class.isInstance(value)){
+                    jsonArrayCheckerAll((JSONArray) value,results, key);
+                }
+            }
+        }else results.add(new ParsedWord(jsonObject,jsonObject.get(key).toString()));
+    }
+
+    private void jsonArrayCheckerAll(JSONArray arr, List<ParsedWord> results, String key){
+        for (Object obj:arr){
+            if (JSONObject.class.isInstance(obj)){
+                jsonRecoursiveFindAll((JSONObject) obj, results, key);
+            }
+            if (JSONArray.class.isInstance(obj)){
+                jsonArrayCheckerAll((JSONArray) obj,results, key);
+            }
+        }
     }
 }

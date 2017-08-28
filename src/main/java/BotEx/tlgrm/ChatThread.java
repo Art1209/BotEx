@@ -38,12 +38,12 @@ public class ChatThread implements Runnable{
         String file_path =null;
         String file_link = null;
         String getFilePath = String.format(MyBot.API_GET_FILE_PATH_LINK,MyBot.TOKEN,file_Id);
-        file_path =parser.JsonFindByKey(MyBot.API_FILE_PATH, httpExecuter.requestForStream(getFilePath));
+        file_path =parser.jsonFindByKey(MyBot.API_FILE_PATH, httpExecuter.requestForStream(getFilePath));
         file_link = String.format(MyBot.API_GET_FILE_LINK,MyBot.TOKEN,file_path);
 
         // Uploading resized to 400 pixel width photo and getting it's link from json response
         InputStream jsonStreamFromImgHosting= httpExecuter.requestForStream(String.format(MyBot.API_DOWNLOAD_IMG_LINK, file_link));
-        hostingImg = parser.JsonFindByKey(MyBot.API_IMG_PATH, jsonStreamFromImgHosting);
+        hostingImg = parser.jsonFindByKey(MyBot.API_IMG_PATH, jsonStreamFromImgHosting);
 
         doSomeWork(hostingImg);
 
@@ -63,7 +63,7 @@ public class ChatThread implements Runnable{
         InputStream jsonStreamFromParserAPI = httpExecuter.requestForStream(String.format(MyBot.API_OCR_PARSE_OVERLAY, link,getLang()));
         int x, y, width, height;
         try {
-            JSONObject obj = parser.JsonFindByValue(getMatchTemplate(), jsonStreamFromParserAPI);
+            JSONObject obj = parser.jsonFindByValue(getMatchTemplate(), jsonStreamFromParserAPI);
             x = (((HashMap<String, Double>)obj).get("Left")).intValue();
             y = (((HashMap<String, Double>)obj).get("Top")).intValue();
             width = (((HashMap<String, Double>)obj).get("Width")).intValue();
@@ -76,7 +76,7 @@ public class ChatThread implements Runnable{
 
         outputFile = new File(MyBot.STANDART_FILE_NAME+chat_id);
         Drawer drawer = new Drawer(link, WaterMarkService.getRandomWatermark());
-        drawer.addImageWatermark((x+width+height),y-(height/2), height);
+        drawer.addImageWatermark((x+width+height),y-height, height);
         drawer.getResultToFile(outputFile);
         SendPhoto photoMessage = new SendPhoto() // Create a message object object
                 .setChatId(chat_id)
@@ -91,7 +91,7 @@ public class ChatThread implements Runnable{
 
     private void doParse(String link) {
         InputStream jsonStreamFromParserAPI = httpExecuter.requestForStream(String.format(MyBot.API_OCR_PARSE, link,getLang()));
-        String result =parser.JsonFindByKey(MyBot.API_OCR_PATH, jsonStreamFromParserAPI);
+        String result =parser.jsonFindByKey(MyBot.API_OCR_PATH, jsonStreamFromParserAPI);
         SendMessage message = new SendMessage() // Create a message object object
                 .setChatId(chat_id)
                 .setText(result);
