@@ -45,24 +45,20 @@ public class ChatThread implements Runnable{
         hostingImg = parser.JsonFindByKey(MyBot.API_IMG_PATH, jsonStreamFromImgHosting);
 
         doSomeWork(hostingImg);
-        doInTheEnd();
 
     }
 // todo make mode enum
     private void doSomeWork(String link) {
-        System.out.println(mode+link);
-        if (mode =="parse"){
-            System.out.println("Это точно парс");
+        System.out.println(link);
+        if ("parse".equals(mode)){
             doParse(link);
         }
-        if (mode =="sign"){
-            System.out.println("Это точно сайн");
+        if ("sign".equals(mode)){
             doSign(link);
         }
     }
 
     private void doSign(String link) {
-        System.out.println("signing");
         InputStream jsonStreamFromParserAPI = httpExecuter.requestForStream(String.format(MyBot.API_OCR_PARSE_OVERLAY, link,getLang()));
         int x, y, width, height;
         try {
@@ -89,13 +85,12 @@ public class ChatThread implements Runnable{
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+        doInTheEnd();
     }
 
     private void doParse(String link) {
-        System.out.println("parsing");
         InputStream jsonStreamFromParserAPI = httpExecuter.requestForStream(String.format(MyBot.API_OCR_PARSE, link,getLang()));
         String result =parser.JsonFindByKey(MyBot.API_OCR_PATH, jsonStreamFromParserAPI);
-        System.out.println(result.substring(0,20));
         SendMessage message = new SendMessage() // Create a message object object
                 .setChatId(chat_id)
                 .setText(result);
@@ -104,6 +99,7 @@ public class ChatThread implements Runnable{
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+        doInTheEnd();
     }
 
     private void failTask(){
@@ -119,7 +115,7 @@ public class ChatThread implements Runnable{
 
 
     private void doInTheEnd() {
-        System.out.println("end");
+        System.out.println("end "+chat_id);
         ((MyBot)bot).deleteFromChatThreads(chat_id);
         if (outputFile!=null)outputFile.delete();
     }
