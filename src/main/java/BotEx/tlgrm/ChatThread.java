@@ -18,6 +18,7 @@ public class ChatThread implements Runnable{
     private Update update;
     private String mode = "sign";
     private String lang = "rus";
+    private String matchTemplate ="OCR";
     File outputFile;
     long chat_id;
     private TelegramLongPollingBot bot;
@@ -62,7 +63,7 @@ public class ChatThread implements Runnable{
         InputStream jsonStreamFromParserAPI = httpExecuter.requestForStream(String.format(MyBot.API_OCR_PARSE_OVERLAY, link,getLang()));
         int x, y, width, height;
         try {
-            JSONObject obj = parser.JsonFindByValue(MyBot.MATCH_TEMPLATE, jsonStreamFromParserAPI);
+            JSONObject obj = parser.JsonFindByValue(getMatchTemplate(), jsonStreamFromParserAPI);
             x = (((HashMap<String, Double>)obj).get("Left")).intValue();
             y = (((HashMap<String, Double>)obj).get("Top")).intValue();
             width = (((HashMap<String, Double>)obj).get("Width")).intValue();
@@ -145,6 +146,13 @@ public class ChatThread implements Runnable{
         return this;
     }
 
+    public void setMatchTemplate(String matchTemplate) {
+        this.matchTemplate = matchTemplate;
+    }
+
+    public String getMatchTemplate() {
+        return matchTemplate;
+    }
 
 
 
