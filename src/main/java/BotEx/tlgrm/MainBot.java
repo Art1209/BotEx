@@ -1,5 +1,6 @@
 package BotEx.tlgrm;
 
+import BotEx.tlgrm.priceChecker.CheckerBot;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -30,7 +31,8 @@ public class MainBot{
 
         // Register our bot
         try {
-            botsApi.registerBot(new MyBot());
+//            botsApi.registerBot(new MyBot());
+            botsApi.registerBot(new CheckerBot());
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }

@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="BotEx:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="BotEx.war">
-      <element id="artifact" artifact-name="BotEx:war exploded" />
-    </root>
-  </artifact>
-</component>
