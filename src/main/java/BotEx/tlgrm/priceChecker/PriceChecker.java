@@ -10,7 +10,7 @@ import java.util.TimerTask;
 
 @Log4j
 public class PriceChecker extends TimerTask{
-    private static String PJS_EXE_PATH = "C:\\Users\\aalbutov\\.m2\\repository\\webdriver\\phantomjs\\windows\\2.1.1\\phantomjs.exe";
+//    private static String PJS_EXE_PATH = "C:\\Users\\aalbutov\\.m2\\repository\\webdriver\\phantomjs\\windows\\2.1.1\\phantomjs.exe";
 
     public PriceChecker(CheckerBot bot, long chatId) {
         this.bot = bot;
@@ -26,7 +26,7 @@ public class PriceChecker extends TimerTask{
     public void run() {
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setJavascriptEnabled(true);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, PJS_EXE_PATH);
+//        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, PJS_EXE_PATH);
 //        driver = new HtmlUnitDriver(true);
         driver = new PhantomJSDriver(caps);
         driver.get(link);
