@@ -7,21 +7,40 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 
 public class CheckerBot extends TelegramLongPollingBot {
-
+    static Timer timer = new Timer();
+    static List<PriceChecker> checkers = new ArrayList<>();
 
     public static final String TOKEN ="402286704:AAGYjEK4OOZynmmyc9fRXxaQNbuwmAQA22U";
     State state = State.WaitCommand;
+    PriceChecker currentChecker;
+
 
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()){
             Message message = update.getMessage();
-            state = state.iterate(message.getText());
-            sendStringMessage(message.getChatId(), state+"  "+message.getText());
+            String text = message.getText();
+            switch (state) {
+                case WaitCommand: {
+                    if (text.equalsIgnoreCase("new")) {
+                        currentChecker = new PriceChecker(this, message.getChatId());
+                        state = State.WaitLink;
+                        break;
+                    }
+                }
+                case WaitLink: {
+                    currentChecker.setLink(text);
+                    checkers.add(currentChecker);
+                    timer.schedule(currentChecker, 500);
+                    state = State.WaitCommand;
+                    break;
+                }
+            }
+            sendStringMessage(message.getChatId(), state+"  "+text);
+
         }
     }
 
@@ -45,27 +64,8 @@ public class CheckerBot extends TelegramLongPollingBot {
         return TOKEN;
     }
     enum State{
-        WaitCommand {
-            @Override
-            State iterate(String str) {
-                if (str.equalsIgnoreCase("new")){
-                    currentChecker = new PriceChecker();
-                    return State.WaitLink;
-                } else return this;
+        WaitCommand,WaitLink;
 
-            }
-        },WaitLink {
-            @Override
-            State iterate(String str) {
-                currentChecker.setLink(str);
-                timer.schedule(currentChecker,500);
-                return WaitCommand;
-            }
-        };
-        static Timer timer = new Timer();
-        static PriceChecker currentChecker;
-        List<PriceChecker> checkers = new ArrayList<>();
-        abstract State iterate(String str);
     }
 
 }

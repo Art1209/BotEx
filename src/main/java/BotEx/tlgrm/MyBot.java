@@ -64,7 +64,6 @@ public class MyBot extends TelegramLongPollingBot {
                 System.out.println("hasphoto");
                 exec.execute(chatThreads.get(chat_id).setUpdate(update));
             }
-
         }
     }
 
@@ -72,7 +71,7 @@ public class MyBot extends TelegramLongPollingBot {
         String format;
         // используется массив, при добавлении команд добавить распарсить что пришло!
         if (containsIgnoreCase(MATCH_TEMPLATE_COMMAND_PREFIX,  message.split(" ")[0])) {
-            message = message.replace(MATCH_TEMPLATE_COMMAND_PREFIX[0],"").trim();
+            message = message.replace((message.split(" ")[0]),"").trim();
             chatThreads.get(id).setMatchTemplate(message);
             format = MATCH_TEMPLATE_CHANGE_SUCCESS;
         } else if (containsIgnoreCase(MODES, message)){
@@ -94,7 +93,7 @@ public class MyBot extends TelegramLongPollingBot {
         } return false;
     }
 
-    boolean deleteFromChatThreads(long id){
+    synchronized boolean deleteFromChatThreads(long id){
         if (chatThreads.containsKey(id)){
             chatThreads.remove(id);
             return true;
