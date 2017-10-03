@@ -19,7 +19,7 @@ public class GetAmountViaJS implements GetAmount {
     public String getAmount(String url) {
         String skuId = url.trim().replace(PRE_SKU_LINK,"").replace(POST_SKU_LINK,"");
         String amount = parser.safeJsonFindByKey("amount",exec.requestForStream(String.format(SERVICE_LINK,skuId)));
-        String result = Integer.parseInt(amount)>0?SUCCESS:OUT_OF_STOCK;
+        String result = Integer.parseInt(amount)!=0?SUCCESS:OUT_OF_STOCK;
         return String.format(RESULT_TEMPLATE,result, amount);
     }
 }

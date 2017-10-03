@@ -60,7 +60,7 @@ public class JsonRecoursiveParser {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (!jsonObj.isEmpty()){
+        if (jsonObj!=null&&!jsonObj.isEmpty()){
                 result= jsonRecoursiveFind(jsonObj , key);
             }
 
