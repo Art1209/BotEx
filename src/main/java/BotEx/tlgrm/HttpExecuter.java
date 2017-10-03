@@ -15,12 +15,6 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 public class HttpExecuter {
-
-    private CloseableHttpClient httpclient = HttpClientBuilder.create()
-            .setSSLHostnameVerifier(new NoopHostnameVerifier())
-            .setConnectionTimeToLive(70L, TimeUnit.SECONDS)
-            .setMaxConnTotal(100).build();
-    private CloseableHttpResponse response;
     private static HttpExecuter exc;
     private HttpExecuter(){}
     public static HttpExecuter getHttpExecuter(){
@@ -28,9 +22,13 @@ public class HttpExecuter {
         return exc;
     }
 
-    public synchronized InputStream requestForStream (String request){
+    public InputStream requestForStream (String request){
+        CloseableHttpClient httpclient = HttpClientBuilder.create()
+                .setSSLHostnameVerifier(new NoopHostnameVerifier())
+                .setConnectionTimeToLive(70L, TimeUnit.SECONDS)
+                .setMaxConnTotal(100).build();
         try {
-            response = httpclient.execute(new HttpGet(request));
+            CloseableHttpResponse response = httpclient.execute(new HttpGet(request));
             return response.getEntity().getContent();
         } catch (IOException e) {
             e.printStackTrace();
