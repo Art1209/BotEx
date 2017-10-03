@@ -6,9 +6,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +34,36 @@ public class JsonRecoursiveParser {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        return result;
+    }
+    public String safeJsonFindByKey(String key, InputStream is){
+        String result = null;
+        JSONObject jsonObj = null;
+        BufferedReader streamReader = null;
+        StringBuilder responseStrBuilder = new StringBuilder();
+        try {
+            streamReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+            String inputStr;
+            while ((inputStr = streamReader.readLine()) != null)
+                responseStrBuilder.append(inputStr);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int a = responseStrBuilder.indexOf("[")+1;
+        int b = responseStrBuilder.lastIndexOf("]");
+        String jsonSource = responseStrBuilder.substring(a,b);
+        try {
+            jsonObj = (JSONObject) parser.parse(jsonSource);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (!jsonObj.isEmpty()){
+                result= jsonRecoursiveFind(jsonObj , key);
+            }
+
         return result;
     }
 

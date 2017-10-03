@@ -1,6 +1,5 @@
 package BotEx.tlgrm.priceChecker;
 
-import io.github.bonigarcia.wdm.PhantomJsDriverManager;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Timer;
 
 public class CheckerBot extends TelegramLongPollingBot {
-    static{PhantomJsDriverManager.getInstance().setup();}
+
     static Timer timer = new Timer();
     static List<PriceChecker> checkers = new ArrayList<>();
 
