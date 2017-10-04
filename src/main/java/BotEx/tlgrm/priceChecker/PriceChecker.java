@@ -4,6 +4,8 @@ import BotEx.tlgrm.priceChecker.checker.GetAmount;
 import BotEx.tlgrm.priceChecker.checker.GetAmountViaJS;
 import BotEx.tlgrm.priceChecker.checker.GetAmountViaPhantom;
 import lombok.extern.log4j.Log4j;
+import org.json.simple.parser.ParseException;
+
 import java.io.Serializable;
 import java.util.TimerTask;
 
@@ -15,6 +17,7 @@ public class PriceChecker extends TimerTask implements Serializable{
     private static GetAmountViaPhantom phHandler= new GetAmountViaPhantom();
 
     private transient CheckerBot bot;
+    private transient int errorCounter;
 
     private long chatId;
     private String link;
@@ -28,15 +31,24 @@ public class PriceChecker extends TimerTask implements Serializable{
     @Override
     public void run() {
         GetAmount handler = getHandlerForLink(link);
-        String result = handler.getAmount(link);
+        String result = null;
+        try {
+            result = handler.getAmount(link);
+        } catch (Exception e) {
+            log.info(e.getClass());
+            errorCounter++;
+        }
         log.info(link+" "+result);
-        if (result.contains(GetAmount.SUCCESS)) {
+        if (result!=null && result.contains(GetAmount.SUCCESS)) {
             if (!isSilent()) {
                 bot.sendStringMessage(chatId, result + " " + link);
                 setSilent(true);
             }
         } else setSilent(false);
-        CheckerBot.timer.schedule(this);
+        if (errorCounter<=2){
+            CheckerBot.timer.schedule(this);
+        }
+
     }
 
     private GetAmount getHandlerForLink(String link) {

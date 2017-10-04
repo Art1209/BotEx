@@ -23,7 +23,7 @@ public class JsonRecoursiveParser {
 
     public String jsonFindByKey(String key, InputStream is){
         String result = null;
-        JSONObject jsonObj = null;
+        JSONObject jsonObj;
         try {
             jsonObj = (JSONObject) parser.parse(new InputStreamReader(is));
             if (!jsonObj.isEmpty()){
@@ -36,10 +36,10 @@ public class JsonRecoursiveParser {
         }
         return result;
     }
-    public String safeJsonFindByKey(String key, InputStream is){
+    public String safeJsonFindByKey(String key, InputStream is) throws ParseException {
         String result = null;
-        JSONObject jsonObj = null;
-        BufferedReader streamReader = null;
+        JSONObject jsonObj;
+        BufferedReader streamReader;
         StringBuilder responseStrBuilder = new StringBuilder();
         try {
             streamReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
@@ -55,15 +55,10 @@ public class JsonRecoursiveParser {
         int a = responseStrBuilder.indexOf("[")+1;
         int b = responseStrBuilder.lastIndexOf("]");
         String jsonSource = responseStrBuilder.substring(a,b);
-        try {
-            jsonObj = (JSONObject) parser.parse(jsonSource);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        jsonObj = (JSONObject) parser.parse(jsonSource);
         if (jsonObj!=null&&!jsonObj.isEmpty()){
                 result= jsonRecoursiveFind(jsonObj , key);
             }
-
         return result;
     }
 
@@ -105,7 +100,7 @@ public class JsonRecoursiveParser {
     public JSONObject jsonFindByValue(String value, InputStream is){
         String [] matches = value.split(" ");
         JSONObject result = null;
-        JSONObject jsonObj = null;
+        JSONObject jsonObj;
         try {
             jsonObj = (JSONObject) parser.parse(new InputStreamReader(is));
             if (!jsonObj.isEmpty()){

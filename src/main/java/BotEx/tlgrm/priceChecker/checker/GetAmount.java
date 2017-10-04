@@ -1,11 +1,10 @@
 package BotEx.tlgrm.priceChecker.checker;
 
-/**
- * Created by aalbutov on 03.10.2017.
- */
+import org.json.simple.parser.ParseException;
+
 public interface GetAmount {
-    static final String RESULT_TEMPLATE = "%s : Current amount : %s";
-    static final String SUCCESS = "Success";
-    static final String OUT_OF_STOCK = "Out of stock";
-    String getAmount(String url);
+    String RESULT_TEMPLATE = "%s : Current amount : %s";
+    String SUCCESS = "Success";
+    String OUT_OF_STOCK = "Out of stock";
+    String getAmount(String url) throws ParseException;
 }
