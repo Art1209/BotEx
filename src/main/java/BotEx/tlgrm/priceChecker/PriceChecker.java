@@ -34,17 +34,21 @@ public class PriceChecker extends TimerTask implements Serializable{
         String result = null;
         try {
             result = handler.getAmount(link);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             log.info(e.getClass());
             errorCounter++;
+        } catch (NullPointerException e){
+            log.info(e.getClass());
         }
-        log.info(link+" "+result);
-        if (result!=null && result.contains(GetAmount.SUCCESS)) {
-            if (!isSilent()) {
-                bot.sendStringMessage(chatId, result + " " + link);
-                setSilent(true);
-            }
-        } else setSilent(false);
+        if (result!=null){
+            log.info(link+" "+ result);
+            if (result.contains(GetAmount.SUCCESS)) {
+                if (!isSilent()) {
+                    bot.sendStringMessage(chatId, result + " " + link);
+                    setSilent(true);
+                }
+            } else setSilent(false);
+        }
         if (errorCounter<=2){
             CheckerBot.timer.schedule(this);
         }
