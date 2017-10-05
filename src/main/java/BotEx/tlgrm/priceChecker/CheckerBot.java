@@ -43,6 +43,9 @@ public class CheckerBot extends TelegramLongPollingBot {
                         sendStringMessage(message.getChatId(), state.approved+"  "+text);
                         state = State.WaitLinkToMute;
                         break;
+                    } else if (text.equalsIgnoreCase("list")) {
+                        sendStringMessage(message.getChatId(), checkers.toString());
+                        break;
                     } else echo(message);
                     break;
                 }
